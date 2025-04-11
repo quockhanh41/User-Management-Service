@@ -2,71 +2,82 @@ const express = require("express");
 const router = express.Router();
 const { body, validationResult } = require("express-validator");
 const authController = require("../controllers/authController");
+const userController = require("../controllers/userController");
 const auth = require("../middlewares/auth");
 
-// Middleware xử lý validation errors
+// Middleware xử lý validation
 const validate = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({
-      status: 'error',
-      message: 'Dữ liệu không hợp lệ',
+    return res.status(422).json({
+      status: "error",
+      message: "Dữ liệu không hợp lệ",
+      code: "VALIDATION_ERROR",
       errors: errors.array()
     });
   }
   next();
 };
 
-// Validation middleware
-const registerValidation = [
-  body("email")
-    .isEmail()
-    .withMessage("Email không hợp lệ")
-    .normalizeEmail(),
-  body("password")
-    .isLength({ min: 6 })
-    .withMessage("Mật khẩu phải có ít nhất 6 ký tự")
-    .trim(),
-  body("name")
-    .notEmpty()
-    .withMessage("Tên không được để trống")
-    .trim()
-    .escape(),
-  validate
-];
+// Đăng ký
+router.post(
+  "/register",
+  [
+    body("email")
+      .isEmail()
+      .withMessage("Email không hợp lệ")
+      .normalizeEmail()
+      .trim(),
+    body("password")
+      .isLength({ min: 6, max: 20 })
+      .withMessage("Mật khẩu phải có độ dài từ 6 đến 20 ký tự")
+      .trim(),
+    body("name")
+      .isLength({ min: 2, max: 50 })
+      .withMessage("Tên phải có độ dài từ 2 đến 50 ký tự")
+      .trim()
+      .escape(),
+    validate
+  ],
+  authController.register
+);
 
-const loginValidation = [
-  body("email")
-    .isEmail()
-    .withMessage("Email không hợp lệ")
-    .normalizeEmail(),
-  body("password")
-    .notEmpty()
-    .withMessage("Mật khẩu không được để trống")
-    .trim(),
-  validate
-];
+// Đăng nhập
+router.post(
+  "/login",
+  [
+    body("email")
+      .isEmail()
+      .withMessage("Email không hợp lệ")
+      .normalizeEmail()
+      .trim(),
+    body("password")
+      .notEmpty()
+      .withMessage("Mật khẩu không được để trống")
+      .trim(),
+    validate
+  ],
+  authController.login
+);
 
-const changePasswordValidation = [
-  body("currentPassword")
-    .notEmpty()
-    .withMessage("Mật khẩu hiện tại không được để trống")
-    .trim(),
-  body("newPassword")
-    .isLength({ min: 6 })
-    .withMessage("Mật khẩu mới phải có ít nhất 6 ký tự")
-    .trim(),
-  validate
-];
-
-// Auth routes
-router.post("/register", registerValidation, authController.register);
-router.post("/login", loginValidation, authController.login);
+// Đăng xuất
 router.post("/logout", auth, authController.logout);
+
+// Đổi mật khẩu
 router.post(
   "/change-password",
-  auth,
-  changePasswordValidation,
+  [
+    auth,
+    body("currentPassword")
+      .notEmpty()
+      .withMessage("Mật khẩu hiện tại không được để trống")
+      .trim(),
+    body("newPassword")
+      .isLength({ min: 6, max: 20 })
+      .withMessage("Mật khẩu mới phải có độ dài từ 6 đến 20 ký tự")
+      .trim(),
+    validate
+  ],
   authController.changePassword
 );
 

@@ -4,6 +4,7 @@ const { validationResult } = require('express-validator');
 
 // Import routes
 const userRoutes = require('./userRoutes');
+const userProfileRoutes = require('./userProfileRoutes');
 
 // Middleware xử lý validation errors
 const handleValidationErrors = (req, res, next) => {
@@ -29,7 +30,11 @@ const errorHandler = (err, req, res, next) => {
       status: 'error',
       message: 'Dữ liệu không hợp lệ',
       code: 'VALIDATION_ERROR',
-      errors: Object.values(err.errors).map(error => error.message)
+      errors: Object.values(err.errors).map(error => ({
+        msg: error.message,
+        param: error.path,
+        location: 'body'
+      }))
     });
   }
   
@@ -54,7 +59,7 @@ const errorHandler = (err, req, res, next) => {
     status: 'error',
     message: 'Lỗi server',
     code: 'INTERNAL_SERVER_ERROR',
-    error: process.env.NODE_ENV === 'development' ? err.message : undefined
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
   });
 };
 
@@ -65,7 +70,7 @@ router.get('/health', (req, res) => {
     message: 'Server is running',
     data: {
       timestamp: new Date().toISOString(),
-      environment: process.env.NODE_ENV
+      environment: process.env.NODE_ENV || 'development'
     }
   });
 });
@@ -76,6 +81,7 @@ const apiVersion = process.env.API_VERSION || 'v1';
 
 // Mount routes
 router.use(`${apiPrefix}/${apiVersion}/auth`, userRoutes);
+router.use(`${apiPrefix}/${apiVersion}/user`, userProfileRoutes);
 
 // Apply middleware
 router.use(handleValidationErrors);

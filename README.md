@@ -4,7 +4,7 @@ Tài liệu API cho User Management Service với xác thực JWT.
 
 ## Thông tin chung
 
-- **Base URL**: `http://localhost:3000/api/v1`
+- **Base URL**: `https://user-management-service-production-38e1.up.railway.app/api/v1`
 - **Content-Type**: `application/json`
 - **Xác thực**: JWT Token (Bearer)
 
@@ -37,7 +37,7 @@ Tài liệu API cho User Management Service với xác thực JWT.
 
 ### 1. Kiểm tra trạng thái server
 
-- **URL**: `/health`
+- **URL**: `https://user-management-service-production-38e1.up.railway.app/health`
 - **Method**: `GET`
 - **Xác thực**: Không
 
@@ -222,6 +222,182 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 }
 ```
 
+### 6. Lấy thông tin người dùng
+
+- **URL**: `/user/profile`
+- **Method**: `GET`
+- **Xác thực**: Có (Bearer Token)
+
+#### Headers
+```
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+#### Response thành công (200)
+```json
+{
+  "status": "success",
+  "message": "Lấy thông tin người dùng thành công",
+  "data": {
+    "_id": "65f2e8b7c261e6001234abcd",
+    "name": "User Name",
+    "email": "user@example.com",
+    "socialAccounts": [
+      {
+        "platform": "Facebook",
+        "profileUrl": "https://www.facebook.com/nguoidung",
+        "socialId": "fb_123456",
+        "accessToken": "access_token_here"
+      },
+      {
+        "platform": "Youtube",
+        "profileUrl": "https://www.youtube.com/nguoidung",
+        "socialId": "yt_abcdef",
+        "accessToken": "access_token_here"
+      }
+    ],
+    "createdAt": "2024-03-14T10:30:00.000Z",
+    "updatedAt": "2024-03-14T10:30:00.000Z"
+  }
+}
+```
+
+#### Response lỗi (404)
+```json
+{
+  "status": "error",
+  "message": "Không tìm thấy người dùng",
+  "code": "USER_NOT_FOUND"
+}
+```
+
+#### Response lỗi (401)
+```json
+{
+  "status": "error",
+  "message": "Token không hợp lệ",
+  "code": "INVALID_TOKEN"
+}
+```
+
+### 7. Thêm/chỉnh sửa tài khoản liên kết
+
+- **URL**: `/user/social`
+- **Method**: `POST` hoặc `PUT`
+- **Xác thực**: Có (Bearer Token)
+
+#### Headers
+```
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+#### Request body
+```json
+{
+  "platform": "Facebook",
+  "socialId": "fb_123456",
+  "profileUrl": "https://www.facebook.com/nguoidung",
+  "accessToken": "access_token_here",
+  "refreshToken": "refresh_token_here"
+}
+```
+
+#### Response thành công (200)
+```json
+{
+  "status": "success",
+  "message": "Thêm tài khoản liên kết thành công",
+  "data": {
+    "socialAccount": {
+      "platform": "Facebook",
+      "socialId": "fb_123456",
+      "profileUrl": "https://www.facebook.com/nguoidung",
+      "accessToken": "access_token_here",
+      "refreshToken": "refresh_token_here"
+    }
+  }
+}
+```
+
+#### Response lỗi validation (422)
+```json
+{
+  "status": "error",
+  "message": "Dữ liệu không hợp lệ",
+  "code": "VALIDATION_ERROR",
+  "errors": [
+    {
+      "msg": "Nền tảng không hợp lệ",
+      "param": "platform",
+      "location": "body"
+    },
+    {
+      "msg": "URL hồ sơ không hợp lệ",
+      "param": "profileUrl",
+      "location": "body"
+    }
+  ]
+}
+```
+
+#### Response lỗi (404)
+```json
+{
+  "status": "error",
+  "message": "Không tìm thấy người dùng",
+  "code": "USER_NOT_FOUND"
+}
+```
+
+#### Response lỗi (401)
+```json
+{
+  "status": "error",
+  "message": "Token không hợp lệ",
+  "code": "INVALID_TOKEN"
+}
+```
+
+### 8. Xóa tài khoản liên kết
+
+- **URL**: `/user/social/{platform}`
+- **Method**: `DELETE`
+- **Xác thực**: Có (Bearer Token)
+
+#### Headers
+```
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+#### Response thành công (200)
+```json
+{
+  "status": "success",
+  "message": "Xóa tài khoản liên kết thành công",
+  "data": {
+    "platform": "Facebook"
+  }
+}
+```
+
+#### Response lỗi (404)
+```json
+{
+  "status": "error",
+  "message": "Không tìm thấy tài khoản liên kết",
+  "code": "SOCIAL_ACCOUNT_NOT_FOUND"
+}
+```
+
+#### Response lỗi (401)
+```json
+{
+  "status": "error",
+  "message": "Token không hợp lệ",
+  "code": "INVALID_TOKEN"
+}
+```
+
 ## Mã lỗi
 
 | Mã lỗi | Mô tả |
@@ -236,6 +412,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 | `INVALID_CURRENT_PASSWORD` | Mật khẩu hiện tại không chính xác |
 | `VALIDATION_ERROR` | Dữ liệu không hợp lệ |
 | `NOT_FOUND` | Route không tồn tại |
+| `SOCIAL_ACCOUNT_NOT_FOUND` | Không tìm thấy tài khoản liên kết |
 | `INTERNAL_SERVER_ERROR` | Lỗi server |
 
 ## Xử lý lỗi validation
@@ -276,6 +453,11 @@ Khi gửi dữ liệu không hợp lệ, API sẽ trả về lỗi với mã `VA
 | `name` | Độ dài từ 2 đến 50 ký tự |
 | `currentPassword` | Không được để trống |
 | `newPassword` | Độ dài từ 6 đến 20 ký tự |
+| `platform` | Phải là một trong: Facebook, Youtube, Tiktok |
+| `socialId` | Không được để trống |
+| `profileUrl` | Phải là URL hợp lệ |
+| `accessToken` | Không được để trống |
+| `refreshToken` | Không bắt buộc |
 
 ## Hướng dẫn sử dụng
 
@@ -298,6 +480,20 @@ Khi gửi dữ liệu không hợp lệ, API sẽ trả về lỗi với mã `VA
 5. **Đổi mật khẩu**:
    - Gọi API `/auth/change-password` với mật khẩu hiện tại và mật khẩu mới
    - Cần xác thực bằng token
+
+6. **Lấy thông tin người dùng**:
+   - Gọi API `/user/profile` để lấy thông tin người dùng
+   - Cần xác thực bằng token
+
+7. **Thêm/chỉnh sửa tài khoản liên kết**:
+   - Gọi API `/user/social` với thông tin tài khoản mạng xã hội
+   - Cần xác thực bằng token
+   - Có thể sử dụng POST để thêm mới hoặc PUT để cập nhật
+
+8. **Xóa tài khoản liên kết**:
+   - Gọi API `/user/social/{platform}` với phương thức DELETE
+   - Cần xác thực bằng token
+   - Thay thế `{platform}` bằng tên nền tảng cần xóa (ví dụ: Facebook, Youtube)
 
 ## Ví dụ sử dụng với Axios
 
@@ -360,4 +556,33 @@ const changePassword = async (passwordData) => {
     throw error.response.data;
   }
 };
-``` 
+
+// Lấy thông tin người dùng
+const getUserProfile = async () => {
+  try {
+    const response = await api.get('/user/profile');
+    return response.data;
+  } catch (error) {
+    throw error.response.data;
+  }
+};
+
+// Thêm/chỉnh sửa tài khoản liên kết
+const updateSocialAccount = async (socialData) => {
+  try {
+    const response = await api.post('/user/social', socialData);
+    return response.data;
+  } catch (error) {
+    throw error.response.data;
+  }
+};
+
+// Xóa tài khoản liên kết
+const deleteSocialAccount = async (platform) => {
+  try {
+    const response = await api.delete(`/user/social/${platform}`);
+    return response.data;
+  } catch (error) {
+    throw error.response.data;
+  }
+};

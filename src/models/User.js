@@ -1,4 +1,29 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
+
+const socialAccountSchema = new mongoose.Schema({
+  platform: {
+    type: String,
+    required: true,
+    enum: ["Facebook", "Youtube", "Tiktok"]
+  },
+  profileUrl: {
+    type: String,
+    required: true
+  },
+  socialId: {
+    type: String,
+    required: true
+  },
+  accessToken: {
+    type: String,
+    required: true
+  },
+  refreshToken: {
+    type: String,
+    required: false
+  }
+}, { _id: false });
 
 const userSchema = new mongoose.Schema(
   {
@@ -8,29 +33,36 @@ const userSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      required: true,
+      required: [true, "Email không được để trống"],
       unique: true,
       trim: true,
       lowercase: true,
+      match: [
+        /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+        "Email không hợp lệ"
+      ]
     },
     password: {
       type: String,
       required: true,
-      select: true // Thay đổi thành true để luôn select password
+      // select: true // Thay đổi thành true để luôn select password
     },
     name: {
       type: String,
-      maxlength: 100,
+      required: [true, "Tên không được để trống"],
       trim: true,
+      minlength: [2, "Tên phải có ít nhất 2 ký tự"],
+      maxlength: [50, "Tên không được vượt quá 50 ký tự"]
     },
     created_at: {
       type: Date,
       default: Date.now,
     },
+    socialAccounts: [socialAccountSchema]
   },
-      {
-    timestamps: true, // Tự động thêm created_at và updated_at
-    versionKey: false, // Không thêm trường __v
+  {
+    timestamps: true,
+    versionKey: false,
   }
 );
 
@@ -50,6 +82,7 @@ userSchema.methods.toJSON = function () {
   delete obj.password; // Xóa password khỏi response
   return obj;
 };
+
 
 const User = mongoose.model("User", userSchema);
 
