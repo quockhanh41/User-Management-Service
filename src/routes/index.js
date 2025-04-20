@@ -2,9 +2,6 @@ const express = require('express');
 const router = express.Router();
 const { validationResult } = require('express-validator');
 
-// Import routes
-const userRoutes = require('./userRoutes');
-const userProfileRoutes = require('./userProfileRoutes');
 
 // Middleware xử lý validation errors
 const handleValidationErrors = (req, res, next) => {
@@ -75,13 +72,6 @@ router.get('/health', (req, res) => {
   });
 });
 
-// API version prefix
-const apiPrefix = process.env.API_PREFIX || '/api';
-const apiVersion = process.env.API_VERSION || 'v1';
-
-// Mount routes
-router.use(`${apiPrefix}/${apiVersion}/auth`, userRoutes);
-router.use(`${apiPrefix}/${apiVersion}/user`, userProfileRoutes);
 
 // Apply middleware
 router.use(handleValidationErrors);

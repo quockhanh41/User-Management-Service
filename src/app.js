@@ -3,6 +3,9 @@ const cors = require("cors");
 require("dotenv").config();
 const routes = require("./routes/index");
 const connectDB = require("./config/database");
+const authRoutes =require("./routes/authRoutes")
+const userProfileRoutes = require("./routes/userProfileRoutes");
+const youtubeRoutes = require("./routes/youtubeRoutes");
 
 const app = express();
 
@@ -14,9 +17,15 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+const apiPrefix = process.env.API_PREFIX || "/api";
+const apiVersion = process.env.API_VERSION || "v1";
+
 
 // Routes
-app.use("", routes);
+app.use(`${apiPrefix}/${apiVersion}/auth`, authRoutes);
+app.use(`${apiPrefix}/${apiVersion}/user`, userProfileRoutes);
+app.use(`${apiPrefix}/${apiVersion}/youtube`, youtubeRoutes);
+app.use("/", routes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
