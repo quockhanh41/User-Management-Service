@@ -586,3 +586,72 @@ const deleteSocialAccount = async (platform) => {
     throw error.response.data;
   }
 };
+
+```
+
+## YouTube API Integration
+
+### Endpoints
+
+#### Authentication
+- `GET /api/v1/youtube/auth/url` - Lấy URL xác thực YouTube
+  - Yêu cầu: Header Authorization (Bearer token)
+  - Response: 
+    ```json
+    {
+      "status": "success",
+      "message": "Lấy URL xác thực thành công",
+      "data": {
+        "authUrl": "https://accounts.google.com/o/oauth2/v2/auth?..."
+      }
+    }
+    ```
+
+- `GET /api/v1/youtube/auth/callback` - Xử lý callback sau khi xác thực
+  - Query params: code, state
+  - Response:
+    ```json
+    {
+      "status": "success",
+      "message": "Liên kết tài khoản YouTube thành công",
+      "data": {
+        "channel": {
+          "id": "channel_id",
+          "title": "Channel Title",
+          "description": "Channel Description",
+          "thumbnail": "thumbnail_url"
+        }
+      }
+    }
+    ```
+
+#### Video Upload
+- `POST /api/v1/youtube/upload` - Upload video lên YouTube
+  - Yêu cầu: 
+    - Header Authorization (Bearer token)
+    - Form data:
+      - video: File video (max 100MB)
+      - title: Tiêu đề video
+      - description: Mô tả video
+      - tags: Các tag phân cách bằng dấu phẩy
+  - Response:
+    ```json
+    {
+      "status": "success",
+      "message": "Upload video thành công",
+      "data": {
+        "videoId": "video_id",
+        "title": "Video Title",
+        "description": "Video Description",
+        "thumbnail": "thumbnail_url"
+      }
+    }
+    ```
+
+### Error Codes
+- `AUTH_CODE_MISSING`: Không tìm thấy mã xác thực
+- `YOUTUBE_CHANNEL_NOT_FOUND`: Không tìm thấy kênh YouTube
+- `USER_NOT_FOUND`: Không tìm thấy người dùng
+- `VIDEO_FILE_MISSING`: Không tìm thấy file video
+- `YOUTUBE_ACCOUNT_NOT_LINKED`: Chưa liên kết tài khoản YouTube
+- `INTERNAL_SERVER_ERROR`: Lỗi server
