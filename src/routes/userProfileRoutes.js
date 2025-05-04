@@ -51,7 +51,7 @@ router.get(
   "/social/:platform",
   auth,
   param("platform")
-    .isIn(["Facebook", "Youtube", "Tiktok"])
+    .isIn(["facebook", "youtube", "tiktok"])
     .withMessage("Nền tảng không hợp lệ"),
   validate,
   userController.getSocialAccount
