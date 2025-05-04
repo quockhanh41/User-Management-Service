@@ -105,7 +105,6 @@ exports.updateSocialAccount = async (req, res) => {
 exports.deleteSocialAccount = async (req, res) => {
   try {
     const { platform } = req.params;
-    
     // Kiểm tra người dùng tồn tại
     const user = await User.findById(req.user.userId);
     if (!user) {

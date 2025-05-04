@@ -78,10 +78,10 @@ exports.handleCallback = async (req, res) => {
         code: 'YOUTUBE_CHANNEL_NOT_FOUND'
       });
     }
-
+  
     // Kiểm tra xem kênh YouTube đã liên kết với user nào chưa
     const existingUser = await User.findOne({
-      'socialAccounts.platform': 'Youtube',
+      'socialAccounts.platform': 'youtube',
       'socialAccounts.socialId': channel.id
     });
 
@@ -108,16 +108,18 @@ exports.handleCallback = async (req, res) => {
     }
 
     const socialAccount = {
-      platform: 'Youtube',
+      platform: 'youtube',
       socialId: channel.id,
+      name: channel.snippet.title,
+      thumbnail: channel.snippet.thumbnails.default.url,
       profileUrl: `https://www.youtube.com/channel/${channel.id}`,
       accessToken: tokens.access_token,
       refreshToken: tokens.refresh_token
     };
-
+ 
     // Kiểm tra xem tài khoản liên kết đã tồn tại chưa
     const existingAccountIndex = user.socialAccounts.findIndex(
-      account => account.platform === 'Youtube'
+      account => account.platform === 'youtube'
     );
 
     if (existingAccountIndex !== -1) {
@@ -176,7 +178,7 @@ exports.uploadVideo = async (req, res) => {
     }
 
     const youtubeAccount = user.socialAccounts.find(
-      account => account.platform === 'Youtube'
+      account => account.platform === 'youtube'
     );
 
     if (!youtubeAccount) {

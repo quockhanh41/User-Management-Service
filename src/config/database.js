@@ -17,7 +17,6 @@ const connectDB = async () => {
     };
 
     console.log('Attempting to connect to MongoDB...');
-    console.log('Environment:', process.env.NODE_ENV || 'development');
     console.log('MongoDB URI:', mongoURI.replace(/\/\/[^:]+:[^@]+@/, '//***:***@')); // Ẩn thông tin nhạy cảm
 
     const conn = await mongoose.connect(mongoURI, options);

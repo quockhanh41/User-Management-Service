@@ -5,13 +5,21 @@ const socialAccountSchema = new mongoose.Schema({
   platform: {
     type: String,
     required: true,
-    enum: ["Facebook", "Youtube", "Tiktok"]
+    enum: ["facebook", "youtube", "tiktok"]
   },
   profileUrl: {
     type: String,
     required: true
   },
   socialId: {
+    type: String,
+    required: true
+  },
+  name: {
+    type: String,
+    required: true
+  },
+  thumbnail: {
     type: String,
     required: true
   },

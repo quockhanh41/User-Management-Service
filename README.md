@@ -244,13 +244,13 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
     "email": "user@example.com",
     "socialAccounts": [
       {
-        "platform": "Facebook",
+        "platform": "facebook",
         "profileUrl": "https://www.facebook.com/nguoidung",
         "socialId": "fb_123456",
         "accessToken": "access_token_here"
       },
       {
-        "platform": "Youtube",
+        "platform": "youtube",
         "profileUrl": "https://www.youtube.com/nguoidung",
         "socialId": "yt_abcdef",
         "accessToken": "access_token_here"
@@ -294,7 +294,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 #### Request body
 ```json
 {
-  "platform": "Facebook",
+  "platform": "facebook",
   "socialId": "fb_123456",
   "profileUrl": "https://www.facebook.com/nguoidung",
   "accessToken": "access_token_here",
@@ -309,7 +309,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
   "message": "Thêm tài khoản liên kết thành công",
   "data": {
     "socialAccount": {
-      "platform": "Facebook",
+      "platform": "facebook",
       "socialId": "fb_123456",
       "profileUrl": "https://www.facebook.com/nguoidung",
       "accessToken": "access_token_here",
@@ -375,7 +375,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
   "status": "success",
   "message": "Xóa tài khoản liên kết thành công",
   "data": {
-    "platform": "Facebook"
+    "platform": "facebook"
   }
 }
 ```
@@ -453,7 +453,7 @@ Khi gửi dữ liệu không hợp lệ, API sẽ trả về lỗi với mã `VA
 | `name` | Độ dài từ 2 đến 50 ký tự |
 | `currentPassword` | Không được để trống |
 | `newPassword` | Độ dài từ 6 đến 20 ký tự |
-| `platform` | Phải là một trong: Facebook, Youtube, Tiktok |
+| `platform` | Phải là một trong: facebook, youtube, tiktok |
 | `socialId` | Không được để trống |
 | `profileUrl` | Phải là URL hợp lệ |
 | `accessToken` | Không được để trống |
@@ -493,7 +493,7 @@ Khi gửi dữ liệu không hợp lệ, API sẽ trả về lỗi với mã `VA
 8. **Xóa tài khoản liên kết**:
    - Gọi API `/user/social/{platform}` với phương thức DELETE
    - Cần xác thực bằng token
-   - Thay thế `{platform}` bằng tên nền tảng cần xóa (ví dụ: Facebook, Youtube)
+   - Thay thế `{platform}` bằng tên nền tảng cần xóa (ví dụ: facebook, youtube)
 
 ## Ví dụ sử dụng với Axios
 
