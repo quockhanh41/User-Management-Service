@@ -78,6 +78,24 @@ exports.handleCallback = async (req, res) => {
         code: 'YOUTUBE_CHANNEL_NOT_FOUND'
       });
     }
+
+    // Kiểm tra xem kênh YouTube đã liên kết với user nào chưa
+    const existingUser = await User.findOne({
+      'socialAccounts.platform': 'Youtube',
+      'socialAccounts.socialId': channel.id
+    });
+
+    if (existingUser && existingUser._id !== userId) {
+      return res.status(409).json({
+        status: 'error',
+        message: 'Kênh YouTube này đã được liên kết với tài khoản khác',
+        code: 'YOUTUBE_CHANNEL_ALREADY_LINKED',
+        data: {
+          userId: existingUser._id,
+          email: existingUser.email
+        }
+      });
+    }
   
     // Lưu thông tin tài khoản liên kết
     const user = await User.findById(userId);

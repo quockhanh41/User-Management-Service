@@ -27,7 +27,7 @@ router.post(
   [
     auth,
     body("platform")
-      .isIn(["Facebook", "Youtube", "Tiktok"])
+      .isIn(["facebook", "youtube", "tiktok"])
       .withMessage("Nền tảng không hợp lệ"),
     body("socialId")
       .notEmpty()
