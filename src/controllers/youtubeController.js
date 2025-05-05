@@ -130,6 +130,11 @@ exports.handleCallback = async (req, res) => {
 
     await user.save();
 
+    // Chuyển hướng đến URL được cấu hình trong .env
+    if (process.env.YOUTUBE_SUCCESS_REDIRECT_URL) {
+      return res.redirect(process.env.YOUTUBE_SUCCESS_REDIRECT_URL);
+    }
+
     res.status(200).json({
       status: 'success',
       message: 'Liên kết tài khoản YouTube thành công',
