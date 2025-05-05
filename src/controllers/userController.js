@@ -188,6 +188,8 @@ exports.getSocialAccount = async (req, res) => {
         socialAccount: {
           platform: socialAccount.platform,
           socialId: socialAccount.socialId,
+          name: socialAccount.name,
+          thumbnail: socialAccount.thumbnail,
           profileUrl: socialAccount.profileUrl,
           accessToken: socialAccount.accessToken,
           refreshToken: socialAccount.refreshToken,
